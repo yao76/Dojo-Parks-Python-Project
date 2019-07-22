@@ -1,0 +1,5 @@
+__pycache__/
+.vscode/
+parkEnv/
+dojo_parks/.DS_Store
+dojo_parks/db.sqlite3

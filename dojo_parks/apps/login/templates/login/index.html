@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login and Registration</title>
+    <link href='https://fonts.googleapis.com/icon?family=Material+Icons' rel='stylesheet'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css'>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row blue darken-2">
+            <div class="col s6 center-align">
+                <div class="row">
+                    <h4 class="white-text">Register</h4>
+                </div>
+                <form action="/register" method="POST">
+                    {%csrf_token%}
+                    <div class="row">
+                        <div class="input-field col s9">
+                            <input class="white-text" type="text" id="first_name" name="first_name">
+                            <label class="white-text" for="first_name">First Name</label>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.extra_tags == "first_name" %}
+                                        <span class="orange-text">{{message}}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s9">
+                            <input class="white-text" type="text" id="last_name" name="last_name">
+                            <label class="white-text" for="last_name">Last Name</label>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.extra_tags == "last_name" %}
+                                        <span class="orange-text">{{message}}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s9">
+                            <input class="white-text" type="text" id="email" name="email">
+                            <label class="white-text" for="email">Email</label>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.extra_tags == "email" %}
+                                        <span class="orange-text">{{message}}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s9">
+                            <input class="white-text" type="password" id="password" name="password">
+                            <label class="white-text" for="password">Password</label>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.extra_tags == "passlength" or message.extra_tags == "passspecial" or message.extra_tags == "passcapital" or message.extra_tags == "passlower" %}
+                                        <span class="orange-text">{{message}}<br></span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s9">
+                            <input class="white-text" type="password" id="password_confirm" name="password_confirm">
+                            <label class="white-text" for="password_confirm">Confirm Password</label>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.extra_tags == "password" %}
+                                        <span class="orange-text">{{message}}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button class="btn">Register</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col s6 center-align">
+                    <div class="row">
+                            <h4 class="white-text">Login</h4>
+                        </div>
+                    <form action="/login" method="POST">
+                        {%csrf_token%}
+                        <div class="row">
+                            <div class="input-field col s9">
+                                <input class="white-text" type="text" id="email" name="email">
+                                <label class="white-text" for="email">Email</label>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.extra_tags == "noemail" %}
+                                            <span class="orange-text">{{message}}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s9">
+                                <input class="white-text" type="password" id="password" name="password">
+                                <label class="white-text" for="password">Password</label>
+                                {% if messages %}
+                                    {% for message in messages %}
+                                        {% if message.extra_tags == "wrongpassword" %}
+                                            <span class="orange-text">{{message}}</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <button class="btn">Login</button>
+                        </div>
+                    </form>
+            </div>
+            
+            
+        </div>
+        
+        
+    </div>
+    
+<script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js'></script>
+</body>
+</html>

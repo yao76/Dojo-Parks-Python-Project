@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            #map {
+                height:600px;
+                border: 2px solid black;
+            }
+            .scroll{
+                height: 800px;
+                overflow-y: auto; 
+                word-wrap: break-word; 
+        }
+        </style>
+        <title>Find Me Fireworks</title>
+        {%load static%}
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-info">
+            <h3 class="text-white">Dojo Parks</h3>
+            <a href="darkmode" class = 'ml-auto mr-3'><button class='btn btn-outline-light btn-sm'>Night Mode</button></a>
+            <a class='ml-auto mr-3 text-light' href="/">Home</a>
+            <a class="text-light" href="/logout">Logout</a>
+        </nav>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3 scroll">
+                    {% for park in sidebar_parks %}
+                    <a href="infopage/{{park.id}}"><header>{{park.title}}</header></a>
+                    <span class='small font-weight-bold'>Phone: </span><span class="small">{{ park.phone_number }}</span><br>
+                    <span class='small font-weight-bold'>Rating: </span><span class="small">{{ park.rating }}</span><br>
+                    <span class='small font-weight-bold'>Review: </span><span class="small">{{ park.review | truncatechars:85 }} <a href="infopage/{{park.id}}" class="small">Read Full Review</a></span><br>
+                    <span class='small font-weight-bold'>Webite: </span><span class="small"><a href="{{park.website}}" target="_blank"> {{ park.website }}</a></span><br>
+                    {% if park.created_by.id == user.id %}
+                    <a class="text-danger" href="remove/{{park.id}}"><span class="small">Remove Park</span></a>
+                    {% endif %}
+                    <hr>
+                    {% endfor %}
+                </div>
+                <div class="col-7">
+                    <div class="row mb-4 mt-3 align-items-center">
+                        <div class="col-6">
+                            <h5 class="mb-3" id="Anchor">Add a park to our database!</h5>
+                            <form action="create" method = 'post'>
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <input type="text" name = 'location'>
+                                    <div class="input-group-append">
+                                        <button class='btn btn-info btn-sm' type= 'submit'>Submit</button>
+                                    </div>
+                                </div>
+                                {% for message in messages %}
+                                {% if message.extra_tags == "duplicate" %}
+                                <p class = "text-danger"><small>{{ message }}</small></p>
+                                {% endif %}
+                                {% endfor %}
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+        // Initialize and add the map
+            
+            function initMap() {
+                var options = {
+                    zoom: 12,
+                    center: {lat: {{last_park.latitude}}, lng: {{last_park.longitude}}}
+                }
+                var map = new google.maps.Map(document.getElementById("map"), options);
+
+            
+                
+
+                // STORING ALL THE MARKERS IN AN ARRAY
+                // var markers = [
+                // {
+                //     coords: coords,
+                //     iconImage: {url:"/static/parks/img/icon.png", scaledSize: new google.maps.Size(30,30)},
+                //     content: '<p><strong>Bellevue, WA</strong></p><p>Butthole, WA</p>'
+                // }
+                // ]
+
+                // LOOPING THROUGH ARRAY TO DISPLAY MARKERS
+                // for (var i = 0; i < markers.length; i++){
+                //     addMarker(markers[i]);
+                // }
+
+                // marker = []
+                // {% for park in all_parks %}
+                // coords = {lat: {{park.latitude}}, lng: {{park.longitude}}}
+                // content = '<p><strong>{{park.title}}</strong></p><p>{{park.address}}</p>'
+                // marker.push(coords)
+                // marker.push(content)
+                // {% endfor %}
+                marker = []
+                {% for park in all_parks %}
+                
+                iwcontentstr = '<div id="content">'+'<div id="siteNotice">'+'</div>'+
+                                '<h5 id="firstHeading" class="firstHeading">{{park.title}}</h1>'+'<div id="bodyContent">'+
+                                '<p><b>Address:</b> {{park.formatted_address}}</p>' +
+                                '<a href="#" id="Anchor">Fireworks?</a> '+
+                                '</div>'+
+                                '</div>';
+                
+                
+                
+                props = {
+                    'coords': {lat: {{park.latitude}}, lng: {{park.longitude}}},
+                    'content': iwcontentstr
+                }
+                marker.push(props)
+                {% endfor %}
+
+                for (var i = 0; i < marker.length; i++){
+                    addMarker(marker[i]);
+                }
+
+                marker.addEventListener("onmouseover", function(){
+                    marker.grow
+                });
+
+                // THE FUNCTION FOR ADDING A MARKER
+                function addMarker(props){
+                    var marker = new google.maps.Marker({
+                        position: props.coords,
+                        map: map,
+                        icon: "{% static 'parks/img/firework.png' %}",
+                        animation: google.maps.Animation.DROP,
+                        // content: props.content
+                    });
+                    marker.addListener('click', togglefirework);
+                    function togglefirework() { 
+                        marker.setIcon('{% static "parks/img/fireworkasdafas.gif" %}');
+                    }
+                    if(props.content){
+                        var infowindow = new google.maps.InfoWindow({
+                            content: props.content
+                        });
+                        marker.addListener('click', function() {
+                        infowindow.open(map, marker);
+                        });
+                    }
+                }
+            }
+
+        </script>
+
+        <script async defer 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4HjeXhplfNZb1oPX3HlrQkFz2FuCzoAs&callback=initMap">
+        </script>
+    </body>
+</html>
